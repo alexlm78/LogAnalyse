@@ -47,7 +47,7 @@ def Broker9():
     with pysftp.Connection(host=sHost, username=sUser, password=sPass, cnopts=cnopts) as sftp:
         for fil in Files:
             remoteFilePath = './backup/'+fil
-            localFilePath = 'data/'+fil+'_'+datetime.today().strftime('%Y.%m.%d')
+            localFilePath = 'data/'+fil
             print('getting: '+remoteFilePath)
             sftp.get(remoteFilePath, localFilePath)
 
