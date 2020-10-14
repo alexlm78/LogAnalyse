@@ -7,7 +7,7 @@ import cx_Oracle
 
 # Loading cx_Oracle from Oracle instantClient
 try:
-    cx_Oracle.init_oracle_client(lib_dir=r"D:/Oracle/instantclient_19_3")
+    cx_Oracle.init_oracle_client(lib_dir=r"D:/Oracle/instantclient_19_6")
 except Exception as err:
     print("Whoops!")
     print(err)
@@ -20,7 +20,7 @@ def loadV9(argv):
 
         conn = cx_Oracle.connect('PMAL/Pm41$_2018f@(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=oracleprd03-scan)(PORT=3875))(ADDRESS=(PROTOCOL=TCP)(HOST=172.17.225.174)(PORT=3876)))(CONNECT_DATA=(SERVER=dedicated)(SERVICE_NAME=PISAPRC)))')
         cur = conn.cursor()
-        
+
         for line in Lines:
             tmp = line.split(' ', 3)
 
@@ -108,9 +108,14 @@ def loadV6(argv):
                     aPayment[iHour] += 1
                 if vXML.find('SB_CNSLTA_EST_LTEL_PISA_001_Request')>0:      # Payment
                     aConsult[iHour] += 1
+    
     # Store the completed data.
     conn = cx_Oracle.connect('PMAL/Pm41$_2018f@(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=oracleprd03-scan)(PORT=3875))(ADDRESS=(PROTOCOL=TCP)(HOST=172.17.225.174)(PORT=3876)))(CONNECT_DATA=(SERVER=dedicated)(SERVICE_NAME=PISAPRC)))')
     cur = conn.cursor()
+
+    statement = 'delete from logAnalyse where la_date=:2'
+    cur.execute(statement, datetime.strptime(vDate, '%Y-%m-%d').strftime('%Y%m%d'))
+    conn.commit()
 
     statement = 'insert into logAnalyse(la_date, la_hour, la_consult, la_balance, la_payment) values ( :2, :3, :4, :5, :6)'
     # Insert data for every one of the 24 hours.
@@ -121,6 +126,22 @@ def loadV6(argv):
     
     # Closing files 
     fp.close()
+
+def delCurrent():
+    hoy = datetime.today()
+    conn = cx_Oracle.connect('PMAL/Pm41$_2018f@(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=oracleprd03-scan)(PORT=3875))(ADDRESS=(PROTOCOL=TCP)(HOST=172.17.225.174)(PORT=3876)))(CONNECT_DATA=(SERVER=dedicated)(SERVICE_NAME=PISAPRC)))')
+    cur = conn.cursor()
+
+    print('Deleting la_c')
+    statement = 'delete from la_consultas where fecconsul='+hoy.strftime('%Y%m%d')
+    cur.execute(statement)
+    conn.commit()
+    print('Deleting la_p')
+    statement = 'delete from la_Pagos where fecha='+hoy.strftime('%Y%m%d')
+    cur.execute(statement)
+    conn.commit()  
+
+    conn.close()
 
 if __name__ == "__main__":
     hoy = datetime.today()
