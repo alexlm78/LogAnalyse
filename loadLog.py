@@ -7,7 +7,7 @@ import cx_Oracle
 
 # Loading cx_Oracle from Oracle instantClient
 try:
-    cx_Oracle.init_oracle_client(lib_dir=r"D:/Oracle/instantclient_19_6")
+    cx_Oracle.init_oracle_client(lib_dir=r+os.getenv('ORACLE_CLIENT'))
 except Exception as err:
     print("Whoops!")
     print(err)
