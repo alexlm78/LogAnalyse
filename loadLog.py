@@ -87,6 +87,7 @@ def loadV6(argv):
     aBalance = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
     aConsult = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
     aPayment = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+    vDate = ''
     
     # Reading the file...
     with open(argv, 'r', errors='replace') as fp:
